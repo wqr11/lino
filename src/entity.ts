@@ -24,21 +24,22 @@ export class Entity {
     this.canvas.appendChild(el);
   }
 
-  public mousedown = () => {
+  public mousedown = (e: MouseEvent) => {
+    const el = e.target as HTMLElement;
+    if (!el.isEqualNode(this.element)) return;
+
     this.isDragging = true;
-    console.log("DOWN", this.id);
-    window.addEventListener("mousemove", this.mousemove);
-    window.addEventListener("mouseup", this.mouseup);
+    window.addEventListener("pointermove", this.mousemove);
+    window.addEventListener("pointerup", this.mouseup);
   };
 
   public mouseup = () => {
     this.isDragging = false;
-    console.log("UP", this.id);
-    window.removeEventListener("mousemove", this.mousemove);
-    window.removeEventListener("mouseup", this.mouseup);
+    window.removeEventListener("pointermove", this.mousemove);
+    window.removeEventListener("pointerup", this.mouseup);
   };
 
-  private mousemove = (e: MouseEvent) => {
+  private mousemove = (e: PointerEvent) => {
     this.x += e.movementX;
     this.y += e.movementY;
 
@@ -55,9 +56,14 @@ export class Entity {
       position: absolute; 
       top: 0; 
       left: 0;
-      transform: translate(${this.x}px, ${this.y}px)
+      transform: translate(${this.x}px, ${this.y}px);
+      will-change: transform;
     `;
     el.className = "task";
+    el.innerHTML = `
+      <textarea style="resize: none; width: 100%"></textarea>
+      <button>hello</button>
+    `;
 
     return el;
   };
