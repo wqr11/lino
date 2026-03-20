@@ -2,7 +2,7 @@ import { Entity } from "./entity";
 import { Store } from "./store";
 import { Task } from "./task";
 
-const SCROLL_SCALE_DELTA = 0.1; // %
+const SCROLL_SCALE_DELTA = 0.1; // 10%
 
 class Main {
   public x: number = 0;
@@ -24,39 +24,60 @@ class Main {
     this.canvas = canvas;
     this.body = body;
 
+    /**
+     * Handles mouse keys press
+     *
+     * 0 - Primary key (left by defautlt)
+     * Nothing now.
+     *
+     * 2 - Secondary key (right by default)
+     * Moving canvas
+     */
     this.body.addEventListener("pointerdown", this.handlePointerDown);
 
+    /**
+     * Disable contextmenu
+     */
     window.addEventListener("contextmenu", (e: Event) => e.preventDefault(), {
       passive: false,
     });
+
+    /**
+     * Creates new Tasks on Spacebar press
+     */
     window.addEventListener("keydown", (ev: KeyboardEvent) => {
       if (ev.key === " ") {
         ev.preventDefault();
         this.entities.push(new Task(canvas, scale).init());
       }
     });
+
+    /**
+     * Spinning wheel changes the scale
+     */
     window.addEventListener("wheel", this.handleWheelScale, {
       passive: false,
     });
-    // @TODO: Finish
-    window.addEventListener(
-      "selectstart",
-      (e: Event) => {
-        e.preventDefault();
 
-        if (this.store.isDragging) {
-          return;
-        }
-      },
-      {
-        passive: false,
-      },
-    );
+    // // @TODO: Finish
+    // window.addEventListener(
+    //   "selectstart",
+    //   (e: Event) => {
+    //     e.preventDefault();
+
+    //     if (this.store.isDragging) {
+    //       return;
+    //     }
+    //   },
+    //   {
+    //     passive: false,
+    //   },
+    // );
   }
 
   public handlePointerDown = (e: MouseEvent) => {
     switch (e.button) {
-      case 1:
+      case 0:
         break;
       case 2:
         const el = e.target as HTMLElement;
@@ -100,7 +121,7 @@ class Main {
   };
 }
 
-const scale = new Store();
-const main = new Main(scale);
+const store = new Store();
+const main = new Main(store);
 
 window.addEventListener("DOMContentLoaded", main.initApp.bind(main));
