@@ -1,0 +1,70 @@
+.note {
+  width: 260px;
+  min-height: 220px;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.note::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.note.yellow {
+  background: #fff59d;
+}
+.note.pink {
+  background: #ffccbc;
+}
+.note.blue {
+  background: #b3e5fc;
+}
+
+.note h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.note textarea,
+.note input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.note textarea {
+  min-height: 80px;
+}
+
+.note .footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.tag {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.date {
+  opacity: 0.7;
+}
+
+.note-fx {
+  transition: transform 100ms ease;
+}

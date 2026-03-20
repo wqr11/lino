@@ -1,0 +1,12 @@
+.entity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: grab;
+  will-change: transform;
+  transition: skew 200ms ease-in-out;
+}
+
+.entity:active {
+  cursor: grabbing;
+}
