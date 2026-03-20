@@ -48,7 +48,7 @@ class Main {
     window.addEventListener("keydown", (ev: KeyboardEvent) => {
       if (ev.key === " ") {
         ev.preventDefault();
-        this.entities.push(new Task(canvas, scale).init());
+        this.entities.push(new Task(this.canvas!, this.store).init());
       }
     });
 
@@ -60,19 +60,15 @@ class Main {
     });
 
     // // @TODO: Finish
-    // window.addEventListener(
-    //   "selectstart",
-    //   (e: Event) => {
-    //     e.preventDefault();
-
-    //     if (this.store.isDragging) {
-    //       return;
-    //     }
-    //   },
-    //   {
-    //     passive: false,
-    //   },
-    // );
+    window.addEventListener(
+      "selectstart",
+      (e: Event) => {
+        e.preventDefault();
+      },
+      {
+        passive: false,
+      },
+    );
   }
 
   public handlePointerDown = (e: MouseEvent) => {

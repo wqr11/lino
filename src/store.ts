@@ -1,3 +1,6 @@
+/**
+ * This is Dependency-Injected into all entities
+ */
 export class Store {
   public scale: number = 1;
   public antiScale: number = 1;
