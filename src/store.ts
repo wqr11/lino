@@ -10,4 +10,5 @@ export class Store {
    * Should be `true` if is currently dragging ANY entity
    */
   public isDragging: boolean = false;
+  public isSelecting: boolean = false;
 }

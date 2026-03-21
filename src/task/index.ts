@@ -1,6 +1,8 @@
 import { Entity } from "../entity";
 
 export class Task extends Entity {
+  public width: number = 260;
+  public height: number = 220;
   protected taskContent!: HTMLDivElement;
 
   protected override createElement = () => {

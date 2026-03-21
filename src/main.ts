@@ -1,4 +1,5 @@
 import { Entity } from "./entity";
+import { Selection } from "./selection";
 import { Store } from "./store";
 import { Task } from "./task";
 
@@ -11,10 +12,13 @@ class Main {
   public body?: HTMLBodyElement;
   public canvas?: HTMLDivElement;
   public entities: Entity[] = [];
+  public selectedEntities: Entity[] = [];
   private store: Store;
+  private selection: Selection;
 
-  constructor(store: Store) {
+  constructor(store: Store, selection: Selection) {
     this.store = store;
+    this.selection = selection;
   }
 
   // Run on DOMContentLoaded
@@ -59,7 +63,9 @@ class Main {
       passive: false,
     });
 
-    // // @TODO: Finish
+    /**
+     * Disable browser selection
+     */
     window.addEventListener(
       "selectstart",
       (e: Event) => {
@@ -72,28 +78,31 @@ class Main {
   }
 
   public handlePointerDown = (e: MouseEvent) => {
+    const el = e.target as HTMLElement;
+    if (!el.isEqualNode(document.body) && !el.isEqualNode(this.canvas!)) return;
+
     switch (e.button) {
       case 0:
+        this.selection.deleteSelection();
+        this.selection.startSelection(e);
+        window.addEventListener("pointermove", this.selection.moveSelection);
+        window.addEventListener("pointerup", this.selectEntities);
         break;
       case 2:
-        const el = e.target as HTMLElement;
-        if (!el.isEqualNode(document.body) && !el.isEqualNode(this.canvas!))
-          return;
-
-        window.addEventListener("pointermove", this.handleGrabMove);
-        window.addEventListener("pointerup", this.removePointerListeners);
+        window.addEventListener("pointermove", this.moveCanvas);
+        window.addEventListener("pointerup", this.removeCanvasListeners);
         break;
       default:
         return;
     }
   };
 
-  public removePointerListeners = () => {
-    window.removeEventListener("pointermove", this.handleGrabMove);
-    window.removeEventListener("pointerup", this.removePointerListeners);
+  public removeCanvasListeners = () => {
+    window.removeEventListener("pointermove", this.moveCanvas);
+    window.removeEventListener("pointerup", this.removeCanvasListeners);
   };
 
-  private handleGrabMove = (e: PointerEvent) => {
+  private moveCanvas = (e: PointerEvent) => {
     this.x += e.movementX * this.store.antiScale;
     this.y += e.movementY * this.store.antiScale;
 
@@ -115,9 +124,60 @@ class Main {
       this.canvas!.style.scale = `${this.store.scale}`;
     }
   };
+
+  private selectEntities = () => {
+    window.removeEventListener("pointermove", this.selection.moveSelection);
+
+    for (let i = 0, len = this.entities.length; i < len; i++) {
+      const entity = this.entities[i];
+
+      const isOverlapping = this.isEntityOverlappingWithSelection(entity);
+
+      console.log(isOverlapping);
+
+      entity.setIsSelected(isOverlapping);
+      this.selectedEntities.push(entity);
+    }
+
+    this.selection.deleteSelection();
+
+    window.removeEventListener("pointermove", this.selection.moveSelection);
+    window.removeEventListener("pointerup", this.selectEntities);
+  };
+
+  private isEntityOverlappingWithSelection = (entity: Entity) => {
+    const {
+      x: entityStartX,
+      y: entityStartY,
+      width: entityWidth,
+      height: entityHeight,
+    } = entity;
+    const entityEndX = entityStartX + entityWidth;
+    const entityEndY = entityStartY + entityHeight;
+
+    const {
+      normalizedStartX: selectionStartX,
+      normalizedStartY: selectionStartY,
+      width: selectionWidth,
+      height: selectionHeight,
+    } = this.selection.getNormalizedCoords();
+    const selectionEndX = selectionStartX + selectionWidth;
+    const selectionEndY = selectionStartY + selectionHeight;
+
+    if (selectionEndX < entityStartX || selectionStartX > entityEndX) {
+      return false;
+    }
+
+    if (selectionEndY < entityStartY || selectionStartY > entityEndY) {
+      return false;
+    }
+
+    return true;
+  };
 }
 
 const store = new Store();
-const main = new Main(store);
+const selection = new Selection(store);
+const main = new Main(store, selection);
 
 window.addEventListener("DOMContentLoaded", main.initApp.bind(main));

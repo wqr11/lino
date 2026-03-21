@@ -1,0 +1,8 @@
+.selection {
+  background-color: #b4d5fe80;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 2px;
+  border: 1px solid #b4d5fe50;
+}

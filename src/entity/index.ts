@@ -13,9 +13,9 @@ export class Entity {
   public width: number = 0;
   public height: number = 0;
   public isDragging: boolean = false;
-  protected transforms: string = "";
+  public isSelected: boolean = false;
   protected store: Store;
-  // public isSelected: boolean = false;
+  protected transforms: string = "";
 
   constructor(domainElement: HTMLDivElement, store: Store) {
     this.store = store;
@@ -25,17 +25,16 @@ export class Entity {
     this.y = Math.floor(Math.random() * this.domainElement.clientHeight - 40);
   }
 
-  public init() {
-    const el = this.createElement();
-    el.onmousedown = this.mousedown.bind(this);
+  public init = () => {
+    this.element = this.createElement();
+    this.element.addEventListener("pointerdown", this.mousedown);
 
-    this.element = el;
-    this.domainElement.appendChild(el);
+    this.translate();
 
-    this.translate(); // To set initial translate(x,y)
+    this.domainElement.appendChild(this.element);
 
     return this;
-  }
+  };
 
   private mousedown = (e: MouseEvent) => {
     const el = e.target as HTMLElement;
@@ -91,6 +90,15 @@ export class Entity {
     `;
 
     return el;
+  };
+
+  public setIsSelected = (isSelected: boolean) => {
+    this.isSelected = isSelected;
+    if (isSelected) {
+      this.element.style.outline = "2px solid red";
+      return;
+    }
+    this.element.style.outline = "";
   };
 
   protected setIsDragging = (isDragging: boolean) => {
