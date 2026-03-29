@@ -161,8 +161,10 @@ class Main {
       width: selectionWidth,
       height: selectionHeight,
     } = this.selection.getNormalizedCoords();
-    const selectionEndX = selectionStartX + selectionWidth;
-    const selectionEndY = selectionStartY + selectionHeight;
+    const selectionEndX =
+      selectionStartX + selectionWidth * this.store.antiScale;
+    const selectionEndY =
+      selectionStartY + selectionHeight * this.store.antiScale;
 
     if (selectionEndX < entityStartX || selectionStartX > entityEndX) {
       return false;
